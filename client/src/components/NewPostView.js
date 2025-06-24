@@ -1,7 +1,10 @@
-import React, { useState } from "react";
+//NewPostView.js
+
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import "../stylesheets/App.css";
 
-export default function NewPostView({ model, onPostCreated }) {
+export default function NewPostView({ onPostCreated }) {
   // State variables for form fields.
   const [communityID, setCommunityID] = useState("");
   const [title, setTitle] = useState("");
@@ -19,8 +22,21 @@ export default function NewPostView({ model, onPostCreated }) {
   const [usernameError, setUsernameError] = useState("");
   const [flairError, setFlairError] = useState("");
 
+  const [communities, setCommunities] = useState([]);
+  const [linkFlairs, setLinkFlairs] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/api/communities").then((res) => {
+        setCommunities(res.data);
+    }).catch((err) => console.error("Error fetching communities: ", err));
+
+    axios.get("http://localhost:8000/api/linkflairs").then((res) => {
+        setLinkFlairs(res.data);
+    }).catch((err) => console.error("Error fetching link flairs: ", err));
+  }, []);
+
   // Handle form submission.
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Clear previous error messages
@@ -90,24 +106,27 @@ export default function NewPostView({ model, onPostCreated }) {
       return;
     }
 
+    try{
     // Determine which link flair to use.
     // If a new link flair is provided, create it; otherwise, use the selected existing flair
     let linkFlairID = "";
     if (newFlair.trim() !== "") {
-      const createdFlair = model.createLinkFlair(newFlair.trim());
-      linkFlairID = createdFlair.linkFlairID;
+      const createdFlair = await axios.post("http://localhost:8000/api/linkflairs", {
+        content: newFlair.trim(),
+      });
+      linkFlairID = createdFlair.data._id;
     } else if (selectedFlair) {
       linkFlairID = selectedFlair;
     }
 
     // Create the new post using the model.
-    model.createPost(
+    await axios.post("http://localhost:8000/api/posts", {
       communityID,
-      title.trim(),
-      content.trim(),
-      username.trim(),
+      title: title.trim(),
+      content: content.trim(),
+      postedBy: username.trim(),
       linkFlairID
-    );
+    });
 
     // Clear form fields
     setCommunityID("");
@@ -121,11 +140,15 @@ export default function NewPostView({ model, onPostCreated }) {
     if (onPostCreated) {
       onPostCreated();
     }
+
+    }catch(error){
+        console.error("Error creating post: ", error);
+    }
   };
 
   // Retrieve available communities and link flairs from the model
-  const communities = model.data.communities;
-  const linkFlairs = model.data.linkFlairs;
+  //const communities = model.data.communities;
+  //const linkFlairs = model.data.linkFlairs;
 
   return (
     <div className="main_container">
@@ -142,14 +165,12 @@ export default function NewPostView({ model, onPostCreated }) {
         >
           <option value="">-- Select a community --</option>
           {communities.map((comm) => (
-            <option key={comm.communityID} value={comm.communityID}>
+            <option key={comm._id} value={comm._id}>
               {comm.name}
             </option>
           ))}
         </select>
-        {communityError && (
-          <div className="error_message">{communityError}</div>
-        )}
+        {communityError && <div className="error_message">{communityError}</div>}
 
         {/* Post title */}
         <label htmlFor="postTitle">
@@ -173,7 +194,7 @@ export default function NewPostView({ model, onPostCreated }) {
         >
           <option value="">-- Select existing link flair --</option>
           {linkFlairs.map((flair) => (
-            <option key={flair.linkFlairID} value={flair.linkFlairID}>
+            <option key={flair._id} value={flair._id}>
               {flair.content}
             </option>
           ))}

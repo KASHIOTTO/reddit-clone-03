@@ -1,59 +1,92 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/fJgEQL7f)
+[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/yvxsppkI)
 
-# Programming Assignment 02 -- Phreddit ( Phake Reddit with React )
+# Programming Assignment 03 - Phreddit (Fake Reddit using express and mongoose)
 
-**In the sections below, list and describe each contribution briefly.**
+In the sections below, list and describe each contribution briefly.
 
 ## Team Member 1 Contribution
 
-<Name of Team Member 1>
+<Yaseen Maqsudi>
 
-- Search Results View
+## Completed Sections
 
-  - Copied newest, oldest, active from home view
-  - Proper integration with banner and routing in phreddit.js
+### Backend Setup
 
-- Post View with Threaded Comments
+- MongoDB schema created for:
+  - `Community`
+  - `Post`
+  - `Comment`
+  - `LinkFlair`
+- `initializeDB.js` script used to seed sample data
+- API endpoints implemented:
+  - `GET /api/communities`
+  - `GET /api/posts`
 
-  - Display post according to assignment
-  - Add comment button and reply button on all comments
-  - All comments properly threaded
-  - Wrap reply callback to ensure original post ID is always passed
+### ️ Frontend Setup
 
-- New Community View
+- React app initialized with custom styling
+- Application layout includes:
+  - `Banner` with site title, search bar, and "Create Post" button
+  - `Navbar` listing all communities and navigation
+  - Main content area for dynamic view rendering
 
-  - User can enter community name and description and username
-  - Support for hyperlink
-  - Validation for required fields
+### Home View
 
-- New Comment View
+- Displays all posts across communities
+- Sorting buttons for:
+  - Newest
+  - Oldest
+  - Most active (recent comment)
 
-  - Let users submit new comment or reply
-  - Validates comment content and username
-  - Validates hyperlink
-  - On successful submission, navigates back to post view (using original postID)
+### Community View
 
-- Navigation adjustments in phreddit.js
-  - Store both parent type and parent ID separate from original post ID
-  - Modified navigateToNewComment function to prevent post not found error
+- Displays all posts in the selected community
+- Shows community metadata:
+  - Name
+  - Description
+  - Creation date
+  - Member count
+- Supports post sorting (newest, oldest, active)
+
+### Search Results View
+
+- Functional search bar in the `Banner`
+- Filters posts by:
+  - Title
+  - Content
+- Displays matching posts with sorting options
 
 ## Team Member 2 Contribution
 
 <Gavin Levitt>
-- imported stylesheets App.css
-- Phreddit.js
-- head banner: fixed position
-  - site logo/title
-    - functionally a home button
-  - search-bar/box 
-    - brings up searchview upon 'enter'
-  - create comm btn
-    - loads in new comm view
-- Navbar: fixed positionally
-  - home btn
-    - renders home view w/ new sorting
-  - comm list (clickable)
-- Comm view (header, creator, description, etc.)
-- Posts
-  - comment threading and replys
-- hyperlinks regex for hyperlink notation
+
+### Post View
+
+- Displays post contents, metadata and comments
+- Bbuttons for:
+  - creating new comment
+  - replies
+
+### NewComment NewPost NewCommunity Views
+
+- Displays all forms for creating new comments, posts, and communities
+- initialization of metadata:
+  - Name
+  - Description
+  - Creation date
+  - Contents
+  - Author/Username
+
+### Phreddit.js
+
+- React app initialized with custom styling
+- Application layout includes:
+  - `Banner` with site title, search bar, and "Create Post" button
+  - `Navbar` listing all communities and navigation
+  - Main content area for dynamic view rendering
+ 
+### Routers
+
+- provided post functions to routers
+- got hyper-links working
+- comments now searchable and appear on posts 

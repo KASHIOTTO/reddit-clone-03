@@ -1,8 +1,11 @@
+//NewCommentView.js
+
 import React, { useState } from "react";
+import axios from "axios";
 import "../stylesheets/App.css";
 
 export default function NewCommentView({
-  model,
+  //model,
   parentType,
   parentID,
   onCommentCreated,
@@ -16,7 +19,7 @@ export default function NewCommentView({
   const [usernameError, setUsernameError] = useState("");
 
   // Handler for form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Clear previous error messages
@@ -61,9 +64,10 @@ export default function NewCommentView({
 
     // If any validation fails, do not proceed
     if (!valid) {
-      return;
-    }
-
+        return;
+    } 
+       
+    /*
     // model.createComment expects (parentType, parentID, content, commentedBy)
     model.createComment(parentType, parentID, content.trim(), username.trim());
 
@@ -74,6 +78,23 @@ export default function NewCommentView({
     // Notify the parent
     if (onCommentCreated) {
       onCommentCreated();
+    }
+    **/
+    try{
+        await axios.post("http://localhost:8000/api/comments", {
+            parentType,
+            parentID,
+            content: content.trim(),
+            commentedBy: username.trim()
+        });
+        setContent("");
+        setUsername("");
+
+        if(onCommentCreated){
+            onCommentCreated();
+        }
+    }catch(error){
+        console.error("Error creating comment: ", error);
     }
   };
 

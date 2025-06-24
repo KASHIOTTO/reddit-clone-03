@@ -1,7 +1,10 @@
+//NewCommunityView.js
+
 import React, { useState } from "react";
+import axios from "axios";
 import "../stylesheets/App.css";
 
-export default function NewCommunityView({ model, onCommunityCreated }) {
+export default function NewCommunityView({ onCommunityCreated }) {
   // State variables to hold form input values.
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -13,7 +16,7 @@ export default function NewCommunityView({ model, onCommunityCreated }) {
   const [usernameError, setUsernameError] = useState("");
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
 
     // Clear previous error messages.
@@ -71,9 +74,10 @@ export default function NewCommunityView({ model, onCommunityCreated }) {
 
     // If any validation failed, do not proceed
     if (!valid) {
-      return;
+        return;
     }
-
+    
+    /*
     // All validations passed, create the community
     const newCommunity = model.createCommunity(
       name.trim(),
@@ -89,6 +93,24 @@ export default function NewCommunityView({ model, onCommunityCreated }) {
     // Navigate to the newly created community view
     if (onCommunityCreated) {
       onCommunityCreated(newCommunity.communityID);
+    }
+    **/
+
+    try{
+        const response = await axios.post("http://localhost:8000/api/communities", {
+            name: name.trim(),
+            description: description.trim(),
+            members: [username.trim()],
+        });
+        setName("");
+        setDescription("");
+        setUsername("");
+
+        if(onCommunityCreated){
+            onCommunityCreated(response.data._id);
+        }
+    }catch(error){
+        console.error("Error creating community:", error);
     }
   };
 
